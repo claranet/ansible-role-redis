@@ -1,0 +1,28 @@
+galaxy_info:
+  role_name: "redis"
+  namespace: "claranet"
+  description: "Install and configure Redis"
+  author: "Claranet"
+  company: "Claranet France"
+
+  license: "MPL2"
+
+  min_ansible_version: "2.13"
+
+  galaxy_tags: ['claranet', 'redis']
+
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []
