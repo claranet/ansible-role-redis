@@ -1,0 +1,41 @@
+---
+- name: server | Mask redis-server service
+  systemd:
+    name: redis-server.service
+    masked: true
+
+- name: server | Create systemd unit file for redis
+  template:
+    src: etc/systemd/system/redis-server@.service.j2
+    dest: /etc/systemd/system/redis-server@.service
+    owner: root
+    group: root
+    mode: 0440
+  register: redis_server_service
+
+- name: server | Delete default redis configuration file
+  file:
+    path: /etc/redis/redis.conf
+    state: absent
+
+- name: server | Configure redis
+  template:
+    src: etc/redis/redis.conf.j2
+    dest: /etc/redis/redis_{{ redis_port }}.conf
+    mode: 0440
+    owner: redis
+    group: redis
+  notify: redis-server restart
+
+- name: server | Activate redis service
+  systemd:
+    name: redis-server@{{ redis_port }}.service
+    masked: false
+    enabled: true
+    daemon_reload: "{{ redis_server_service is changed }}"
+
+- name: server | Check service Redis is started
+  systemd:
+    name: redis-server@{{ redis_port }}.service
+    state: started
+  register: systemctl_start_redis_server

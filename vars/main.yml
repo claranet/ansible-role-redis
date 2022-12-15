@@ -1,2 +1,9 @@
 ---
 # vars file for role
+redis_master_host_: >-
+  {%- for host in redis_group -%}
+  {%-   if hostvars[host].redis_role == 'master' -%}
+  {{      host }}
+  {%-   endif -%}
+  {%- endfor -%}
+redis_master_host_ip_: "{{ redis_master_ip | default(hostvars[ redis_master_host_ ].ansible_all_ipv4_addresses | ipaddr(redis_peering_network) | first, true)}}"
