@@ -66,7 +66,7 @@
 # IF YOU ARE SURE YOU WANT YOUR INSTANCE TO LISTEN TO ALL THE INTERFACES
 # JUST COMMENT THE FOLLOWING LINE.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-bind {{ redis_listen }}
+bind {{ redis_server_listen }}
 
 # Protected mode is a layer of security protection, in order to avoid that
 # Redis instances left open on the internet are accessed and exploited.
@@ -85,11 +85,11 @@ bind {{ redis_listen }}
 # you are sure you want clients from other hosts to connect to Redis
 # even if no authentication is configured, nor a specific set of interfaces
 # are explicitly listed using the "bind" directive.
-protected-mode yes
+protected-mode {{ redis_server_protected_mode }}
 
 # Accept connections on the specified port, default is 6379 (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
-port {{ redis_port }}
+port {{ redis_server_port }}
 
 # TCP listen() backlog.
 #
@@ -110,7 +110,7 @@ tcp-backlog 511
 # unixsocketperm 700
 
 # Close the connection after a client is idle for N seconds (0 to disable)
-timeout {{ redis_timeout }}
+timeout {{ redis_server_timeout }}
 
 # TCP keepalive.
 #
@@ -127,7 +127,7 @@ timeout {{ redis_timeout }}
 #
 # A reasonable value for this option is 300 seconds, which is the new
 # Redis default starting with Redis 3.2.1.
-tcp-keepalive {{ redis_tcp_keepalive }}
+tcp-keepalive {{ redis_server_tcp_keepalive }}
 
 ################################# GENERAL #####################################
 
@@ -155,7 +155,7 @@ supervised systemd
 #
 # Creating a pid file is best effort: if Redis is not able to create it
 # nothing bad happens, the server will start and run normally.
-pidfile /var/run/redis/redis-server_{{ redis_port }}.pid
+pidfile /var/run/redis/redis-server_{{ redis_server_port }}.pid
 
 # Specify the server verbosity level.
 # This can be one of:
@@ -163,12 +163,12 @@ pidfile /var/run/redis/redis-server_{{ redis_port }}.pid
 # verbose (many rarely useful info, but not a mess like the debug level)
 # notice (moderately verbose, what you want in production probably)
 # warning (only very important / critical messages are logged)
-loglevel {{ redis_loglevel }}
+loglevel {{ redis_server_loglevel }}
 
 # Specify the log file name. Also the empty string can be used to force
 # Redis to log on the standard output. Note that if you use standard
 # output for logging but daemonize, logs will be sent to /dev/null
-logfile {{ redis_logdir }}/{{ redis_logfile }}
+logfile {{ redis_server_logdir }}/{{ redis_server_logfile }}
 
 # To enable logging to the system logger, just set 'syslog-enabled' to yes,
 # and optionally update the other syslog parameters to suit your needs.
@@ -183,7 +183,7 @@ logfile {{ redis_logdir }}/{{ redis_logfile }}
 # Set the number of databases. The default database is DB 0, you can select
 # a different one on a per-connection basis using SELECT <dbid> where
 # dbid is a number between 0 and 'databases'-1
-databases {{ redis_databases }}
+databases {{ redis_server_databases_number }}
 
 # By default Redis shows an ASCII art logo only when started to log to the
 # standard output and if the standard output is a TTY. Basically this means
@@ -250,7 +250,7 @@ rdbcompression yes
 rdbchecksum yes
 
 # The filename where to dump the DB
-dbfilename {{ redis_port }}.rdb
+dbfilename {{ redis_server_port }}.rdb
 
 # The working directory.
 #
@@ -260,7 +260,7 @@ dbfilename {{ redis_port }}.rdb
 # The Append Only File will also be created inside this directory.
 #
 # Note that you must specify a directory here, not a file name.
-dir {{ redis_databases_dir }}
+dir {{ redis_server_databases_dir }}
 
 ################################# REPLICATION #################################
 
@@ -285,7 +285,7 @@ dir {{ redis_databases_dir }}
 #
 # replicaof <masterip> <masterport>
 {% if redis_role == "replica" %}
-replicaof {{ redis_master_host_ip_ }} {{ redis_port }}
+replicaof {{ _redis_master_ip }} {{ redis_server_port }}
 {% endif %}
 
 # If the master is password protected (using the "requirepass" configuration
@@ -294,8 +294,8 @@ replicaof {{ redis_master_host_ip_ }} {{ redis_port }}
 # refuse the replica request.
 #
 # masterauth <master-password>
-{% if redis_password is not none %}
-masterauth {{ redis_password }}
+{% if redis_server_password is not none %}
+masterauth {{ redis_server_password }}
 {% endif %}
 
 # When a replica loses its connection with the master, or when the replication
@@ -311,7 +311,7 @@ masterauth {{ redis_password }}
 #    SUBSCRIBE, UNSUBSCRIBE, PSUBSCRIBE, PUNSUBSCRIBE, PUBLISH, PUBSUB,
 #    COMMAND, POST, HOST: and LATENCY.
 #
-replica-serve-stale-data {{ redis_replica_serve_stale_data }}
+replica-serve-stale-data {{ redis_server_replica_serve_stale_data }}
 
 # You can configure a replica instance to accept writes or not. Writing against
 # a replica instance may be useful to store some ephemeral data (because data
@@ -327,7 +327,7 @@ replica-serve-stale-data {{ redis_replica_serve_stale_data }}
 # such as CONFIG, DEBUG, and so forth. To a limited extent you can improve
 # security of read only replicas using 'rename-command' to shadow all the
 # administrative / dangerous commands.
-replica-read-only {{ redis_replica_readonly }}
+replica-read-only {{ redis_server_replica_readonly }}
 
 # Replication SYNC strategy: disk or socket.
 #
@@ -444,7 +444,7 @@ repl-disable-tcp-nodelay no
 # Redis Sentinel for promotion.
 #
 # By default the priority is 100.
-replica-priority {{ redis_replica_priority }}
+replica-priority {{ redis_server_replica_priority }}
 
 # It is possible for a master to stop accepting writes if there are less than
 # N replicas connected, having a lag less or equal than M seconds.
@@ -512,8 +512,8 @@ replica-priority {{ redis_replica_priority }}
 #
 # requirepass foobared
 
-{% if redis_password is not none %}
-requirepass {{ redis_password }}
+{% if redis_server_password is not none %}
+requirepass {{ redis_server_password }}
 {% endif %}
 
 # Command renaming.
@@ -546,7 +546,7 @@ requirepass {{ redis_password }}
 # Once the limit is reached Redis will close all the new connections sending
 # an error 'max number of clients reached'.
 #
-maxclients {{ redis_maxclients }}
+maxclients {{ redis_server_maxclients }}
 
 ############################## MEMORY MANAGEMENT ################################
 
@@ -573,7 +573,7 @@ maxclients {{ redis_maxclients }}
 # limit for maxmemory so that there is some free RAM on the system for replica
 # output buffers (but this is not needed if the policy is 'noeviction').
 #
-maxmemory {{redis_maxmemory}}
+maxmemory {{redis_server_maxmemory}}
 
 # MAXMEMORY POLICY: how Redis will select what to remove when maxmemory
 # is reached. You can select among five behaviors:
@@ -605,7 +605,7 @@ maxmemory {{redis_maxmemory}}
 # The default is:
 #
 # maxmemory-policy noeviction
-maxmemory-policy {{ redis_maxmemory_policy }}
+maxmemory-policy {{ redis_server_maxmemory_policy }}
 
 # LRU, LFU and minimal TTL algorithms are not precise algorithms but approximated
 # algorithms (in order to save memory), so you can tune it for speed or
@@ -617,7 +617,7 @@ maxmemory-policy {{ redis_maxmemory_policy }}
 # true LRU but costs more CPU. 3 is faster but not very accurate.
 #
 # maxmemory-samples 5
-maxmemory-samples {{ redis_maxmemory_samples }}
+maxmemory-samples {{ redis_server_maxmemory_samples }}
 
 # Starting from Redis 5, by default a replica will ignore its maxmemory setting
 # (unless it is promoted to master after a failover or manually). It means

@@ -24,8 +24,8 @@ ReadOnlyDirectories=/
 ReadWriteDirectories=-/var/lib/redis
 ReadWriteDirectories=-/var/log/redis
 ReadWriteDirectories=-/var/run/sentinel
-ReadWriteDirectories=-{{ redis_databases_dir }}
-ReadWriteDirectories=-{{ redis_logdir }}
+ReadWriteDirectories=-{{ redis_server_databases_dir }}
+ReadWriteDirectories=-{{ redis_server_logdir }}
 
 NoNewPrivileges=true
 CapabilityBoundingSet=CAP_SETGID CAP_SETUID CAP_SYS_RESOURCE

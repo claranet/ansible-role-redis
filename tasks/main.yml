@@ -1,48 +1,36 @@
 ---
-- name: check variables
-  assert:
-    that:
-      - redis_server_enabled or redis_sentinel_enabled
-      - (not redis_server_enabled) or (redis_server_version is defined)
-      - (not redis_sentinel_enabled) or (redis_sentinel_version is defined)
-      # check there is one and only one master
-      - redis_group|map('extract', hostvars)|selectattr('redis_role', 'eq', 'master')|list|length == 1
-    quiet: true
 
-- name: Ensure backport repository is configured
-  apt_repository:
-    repo: deb http://ftp.debian.org/debian {{ ansible_distribution_release | lower }}-backports main
-    filename: backports
+- name: Gather OS specific variables
+  ansible.builtin.include_vars: "{{ loop_vars }}"
+  loop: "{{ query('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_os_family | lower }}-family.yml"
+        - "{{ ansible_system | lower }}.yml"
+      paths:
+        - "vars"
+      skip: true
+  loop_control:
+    loop_var: loop_vars
 
-- name: set overcommit_memory = 1
-  sysctl:
-    name: vm.overcommit_memory
-    value: "1"
-    sysctl_file: /etc/sysctl.d/redis_ansible_role.conf
-    sysctl_set: true
-  when: redis_server_enabled
-
-- name: Install Redis packages
-  apt:
-    name: >-
-      {%- set packages_redis_final_ = packages_redis_python_ -%}
-      {%- if redis_server_enabled -%}
-      {{-   packages_redis_final_.append('redis-server=' ~ redis_server_version ~ '*') -}}
-      {%- endif -%}
-      {%- if redis_sentinel_enabled -%}
-      {{-   packages_redis_final_.append('redis-sentinel=' ~ redis_sentinel_version ~ '*') -}}
-      {%- endif -%}
-      {%- if redis_server_version is defined -%}
-      {{-   packages_redis_final_.append('redis-tools=' ~ redis_server_version ~ '*') -}}
-      {%- else -%}
-      {{-   packages_redis_final_.append('redis-tools=' ~ redis_sentinel_version ~ '*') -}}
-      {%- endif -%}
-      {{- packages_redis_final_ | unique -}}
-    policy_rc_d: 101
+- name: Install redis in {{ ansible_distribution | lower }}
+  ansible.builtin.include_tasks: "{{ loop_vars }}"
+  loop: "{{ query('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_os_family | lower }}-family.yml"
+        - "{{ ansible_system | lower }}.yml"
+      paths:
+        - "tasks"
+      skip: true
+  loop_control:
+    loop_var: loop_vars
 
 - name: Create Redis Log directory
-  file:
-    path: "{{ redis_logdir }}"
+  ansible.builtin.file:
+    path: "{{ redis_server_logdir }}"
     owner: redis
     group: redis
     # same mode than /var/log/redis/
@@ -51,15 +39,16 @@
     state: directory
 
 - name: Create Redis Data directory
-  file:
-    path: "{{ redis_databases_dir }}"
+  ansible.builtin.file:
+    path: "{{ redis_server_databases_dir }}"
     owner: redis
     group: redis
     mode: 0750
     state: directory
 
-- import_tasks: server.yml
+- name: "Include tasks for configure redis server"
+  ansible.builtin.include_tasks: server.yml
   when: redis_server_enabled
 
-- import_tasks: sentinel.yml
-  when: redis_sentinel_enabled
+# - import_tasks: sentinel.yml
+#   when: redis_sentinel_enabled
