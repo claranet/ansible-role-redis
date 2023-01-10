@@ -5,7 +5,7 @@
 redis_master_ip: ""
 
 # redis_group: []
-redis_group: "{{ groups.redis }}"
+redis_group: "{{ groups.redis if groups.redis is defined else '' }}"
 
 
 # version of redis to install
@@ -50,10 +50,6 @@ redis_server_dbfilename: dump.rdb
 
 # allow replica readonly with yes/no
 redis_server_replica_readonly: 'yes'
-
-# redis protected mode
-# se baser sur le password 
-redis_server_protected_mode: 'no'
 
 # set priority to replicas
 redis_server_replica_priority: 100
