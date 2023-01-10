@@ -1,0 +1,17 @@
+---
+- name: First instance
+  hosts: all
+  vars:
+    redis_sentinel_enabled: false
+    redis_server_version: 6:7.0.7
+  roles:
+    - role: claranet.redis
+
+- name: Second instance
+  hosts: all
+  vars:
+    redis_sentinel_enabled: false
+    redis_server_version: 6:7.0.7
+    redis_server_port: 6378
+  roles:
+    - role: claranet.redis
