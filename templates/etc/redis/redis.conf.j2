@@ -85,7 +85,11 @@ bind {{ redis_server_listen }}
 # you are sure you want clients from other hosts to connect to Redis
 # even if no authentication is configured, nor a specific set of interfaces
 # are explicitly listed using the "bind" directive.
-protected-mode {{ redis_server_protected_mode }}
+{% if redis_server_password is not none %}
+protected-mode yes
+{% else %}
+protected-mode no
+{% endif %}
 
 # Accept connections on the specified port, default is 6379 (IANA #815344).
 # If port 0 is specified Redis will not listen on a TCP socket.
@@ -284,7 +288,7 @@ dir {{ redis_server_databases_dir }}
 #    and resynchronize with them.
 #
 # replicaof <masterip> <masterport>
-{% if redis_role == "replica" %}
+{% if redis_role is defined and redis_role == "replica" %}
 replicaof {{ _redis_master_ip }} {{ redis_server_port }}
 {% endif %}
 
