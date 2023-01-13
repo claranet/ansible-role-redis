@@ -66,7 +66,7 @@ logfile "{{ redis_sentinel_logdir }}/{{ redis_sentinel_logfile }}"
 dir "{{ redis_sentinel_databases_dir }}"
 
 # sentinel monitor <master-name> <ip> <redis-port> <quorum>
-sentinel monitor mymaster {{ _redis_master_ip }} {{ redis_server_port }} {{ redis_sentinel_quorum }}
+sentinel monitor mymaster {{ _redis_master_ip }} {{ redis_server_port }} {{ redis_sentinel_quorum }}
 
 
 #

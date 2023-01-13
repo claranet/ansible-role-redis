@@ -50,5 +50,6 @@
   ansible.builtin.include_tasks: server.yml
   when: redis_server_enabled
 
-# - import_tasks: sentinel.yml
-#   when: redis_sentinel_enabled
+- name: Include tasks for configure redis sentinel
+  ansible.builtin.include_tasks: sentinel.yml
+  when: redis_sentinel_enabled
