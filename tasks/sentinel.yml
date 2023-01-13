@@ -52,11 +52,11 @@
     owner: redis
     group: redis
     mode: 0640
-  notify: Redis-sentinel restart
+  notify: Redis-sentinel reload
   when: >-
     _redis_sentinel_config_rewrite.found is not defined
     or
-    _redis_sentinel_config_rewrite.found == 0
+    _redis_sentinel_config_rewrite.found != 1
 
 - name: Sentinel | Activate redis-sentinel service
   ansible.builtin.systemd:
