@@ -69,15 +69,36 @@ redis_server_maxmemory: "{{ [ansible_memtotal_mb * 1024 * 1024 - 1073741824, (an
 redis_server_password: null
 
 # Sentinel
+
 # enable sentinel feature for HA
 redis_sentinel_enabled: false
+
+# sentinel version to install
 redis_sentinel_version: "{{ redis_server_version }}"
+
+# daemonize redis sentinel
 redis_sentinel_daemonize: true
-redis_sentinel_listen: 127.0.0.1
+
+# listen address for sentinel
+redis_sentinel_listen: 0.0.0.0
+
+# port for listen address
 redis_sentinel_port: 26379
+
+# logdir path for sentinel
 redis_sentinel_logdir: "{{ redis_server_logdir }}"
+
+# sentinel logfile
 redis_sentinel_logfile: "redis-sentinel_{{ redis_sentinel_port }}.log"
+
+# sentinel database directory
 redis_sentinel_databases_dir: "{{ redis_server_databases_dir }}"
+
+# redis sentinel quorum
 redis_sentinel_quorum: 2
+
+# redis sentinel downafter
 redis_sentinel_downafter: 10000
+
+# failover timeout
 redis_sentinel_failover_timeout: 30000
