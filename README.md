@@ -70,7 +70,7 @@ N/A
 ## :pencil2: Example Playbook
 
 
-* #### :pencil2: Standalone scenario
+* #### Standalone scenario
 
 ```yaml
 ---
@@ -82,7 +82,7 @@ N/A
     - role: claranet.redis
 ```
 
-* #### :pencil2: Multi-instance scenario
+* #### Multi-instance scenario
 
 ```yaml
 ---
@@ -104,7 +104,7 @@ N/A
     - role: claranet.redis
 ```
 
-* #### :pencil2: Master slave scenario
+* #### Master slave scenario
 
 **inventory**
 
@@ -134,7 +134,7 @@ all:
     - role: claranet.redis
 ```
 
-* #### :pencil2: Sentinel scenario
+* #### Sentinel scenario
 
 **inventory**
 
