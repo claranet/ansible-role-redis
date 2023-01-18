@@ -1,18 +1,17 @@
 ---
 # defaults file for role
 
+# enabled redis server
+redis_server_enabled: true
+
 # set an empty string to autodiscover master ip
 redis_master_ip: ""
 
 # redis_group: []
 redis_group: "{{ groups.redis if groups.redis is defined else '' }}"
 
-
 # version of redis to install
 redis_server_version: latest
-
-# enabled redis server
-redis_server_enabled: true
 
 # user for service
 redis_server_user: redis
@@ -45,7 +44,7 @@ redis_server_databases_number: 16
 # path of databases files
 redis_server_databases_dir: /var/lib/redis
 
-# path of redis filename database
+# database filename
 redis_server_dbfilename: dump.rdb
 
 # allow replica readonly with yes/no
@@ -54,18 +53,25 @@ redis_server_replica_readonly: 'yes'
 # set priority to replicas
 redis_server_replica_priority: 100
 
+# allow replica server stale data
 redis_server_replica_serve_stale_data: 'yes'
 
+# maxclients number
 redis_server_maxclients: 10000
 
+# server limitnofile
 redis_server_limitnofile: 65535
 
+# max memory policy allowed
 redis_server_maxmemory_policy: allkeys-lru
 
+# max memory samples allowed
 redis_server_maxmemory_samples: 5
 
+# max memory available
 redis_server_maxmemory: "{{ [ansible_memtotal_mb * 1024 * 1024 - 1073741824, (ansible_memtotal_mb * 1024 * 1024 * 0.8) | int] | max }}"
 
+# redis server password
 redis_server_password: null
 
 # Sentinel
