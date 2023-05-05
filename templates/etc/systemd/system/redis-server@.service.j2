@@ -5,16 +5,14 @@ Documentation=http://redis.io/documentation, man:redis-server(1)
 
 [Service]
 Type=notify
-ExecStartPre=+/bin/sh -c 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'
-ExecStart=/usr/bin/redis-server /etc/redis/redis_%i.conf
+ExecStart=/usr/bin/redis-server /etc/redis/redis_{{ redis_server_port }}.conf
 ExecStop=/bin/kill -s TERM $MAINPID
-PIDFile=/var/run/redis/redis-server_%i.pid
+PIDFile=/var/run/redis/redis-server_{{ redis_server_port }}.pid
 TimeoutStopSec=0
 Restart=always
-User=redis
-Group=redis
+User={{ redis_server_user }}
+Group={{ redis_server_user }}
 RuntimeDirectory=redis
-RuntimeDirectoryPreserve=yes
 RuntimeDirectoryMode=2755
 
 UMask=007
@@ -26,8 +24,8 @@ ReadOnlyDirectories=/
 ReadWriteDirectories=-/var/lib/redis
 ReadWriteDirectories=-/var/log/redis
 ReadWriteDirectories=-/var/run/redis
-ReadWriteDirectories=-{{ redis_databases_dir }}
-ReadWriteDirectories=-{{ redis_logdir }}
+ReadWriteDirectories=-{{ redis_server_databases_dir }}
+ReadWriteDirectories=-{{ redis_server_logdir }}
 ReadWritePaths=-/sys/kernel/mm/transparent_hugepage/enabled
 
 NoNewPrivileges=true
@@ -48,3 +46,4 @@ ReadWriteDirectories=-/etc/redis
 
 [Install]
 WantedBy=multi-user.target
+Alias=redis.service

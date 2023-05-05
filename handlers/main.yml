@@ -1,16 +1,16 @@
 ---
-- name: redis-server restart
-  debug:
+- name: Redis-server restart
+  ansible.builtin.debug:
     msg:
       - "****"
       - "**** !!! MANUAL RESTART NEEDED !!!"
       - "**** Configuration files changed, you have to restart redis manually"
       - "****"
   when:
-    - systemctl_start_redis_server is defined
-    - systemctl_start_redis_server is not changed
+    - _redis_server_systemctl_start is defined
+    - _redis_server_systemctl_start is not changed
 
-- name: redis-sentinel restart
-  systemd:
+- name: Redis-sentinel reload
+  ansible.builtin.systemd:
     name: "redis-sentinel@{{ redis_sentinel_port }}.service"
-    state: restarted
+    state: reloaded

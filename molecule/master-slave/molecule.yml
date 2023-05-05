@@ -9,7 +9,7 @@ platforms:
   # On "${name:-${image:-debian}", the last brace does not miss, it works like that...
   # The env var should be used when the image variable refers to a full registry path like registry.access.redhat.com/ubi8/ubi
   - &instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_standalone
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_master
     image: ${image:-debian}:${tag:-latest}
     privileged: true
     tty: true
@@ -22,6 +22,15 @@ platforms:
       - SYS_TIME
       - LINUX_IMMUTABLE
     command: "/lib/systemd/systemd"
+    groups:
+      - redis
+
+  - <<: *instance
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica1
+
+  - <<: *instance
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica2
+
 
 provisioner:
   name: ansible
@@ -29,6 +38,17 @@ provisioner:
     ANSIBLE_FORCE_COLOR: "true"
   options:
     v: true
+  inventory:
+    host_vars:
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_master:
+        redis_role: master
+        test: master1
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica1:
+        redis_role: replica
+        test: replica1
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica2:
+        redis_role: replica
+        name: replica2
 
 verifier:
   name: testinfra

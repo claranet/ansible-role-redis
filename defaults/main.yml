@@ -1,45 +1,110 @@
 ---
 # defaults file for role
 
-# redis_server_version: …
+# enabled redis server
 redis_server_enabled: true
 
-redis_user: redis
-redis_listen: 127.0.0.1
-redis_port: 6379
-redis_timeout: 0
-redis_tcp_keepalive: 300
-
-redis_loglevel: notice
-redis_logdir: /space/logs/redis
-redis_logfile: "redis-server_{{ redis_port }}.log"
-redis_databases: 16
-redis_databases_dir: /space/redis
-redis_dbfilename: dump.rdb
-redis_replica_readonly: 'yes'
-redis_replica_priority: 100
-redis_replica_serve_stale_data: 'yes'
-redis_maxclients: 10000
-redis_limitnofile: 65535
-redis_maxmemory_policy: allkeys-lru
-redis_maxmemory_samples: 5
-redis_maxmemory: "{{ [ ansible_memtotal_mb * 1024 * 1024 - 1073741824 , (ansible_memtotal_mb * 1024 * 1024 * 0.8) | int ] | max }}"
-redis_password: null
 # set an empty string to autodiscover master ip
 redis_master_ip: ""
 
 # redis_group: []
-redis_group: "{{ groups.redis }}"
+redis_group: "{{ groups.redis if groups.redis is defined else '' }}"
+
+# version of redis to install
+redis_server_version: latest
+
+# user for service
+redis_server_user: redis
+redis_server_group: redis
+
+# listen address
+redis_server_listen: 0.0.0.0
+
+# listen port
+redis_server_port: 6379
+
+# server timeout
+redis_server_timeout: 0
+
+# server tcp keepalive
+redis_server_tcp_keepalive: 300
+
+# set server log level
+redis_server_loglevel: notice
+
+# set redis log directory path
+redis_server_logdir: /var/log/redis
+
+# log file path
+redis_server_logfile: "redis-server_{{ redis_server_port }}.log"
+
+# number of databases
+redis_server_databases_number: 16
+
+# path of databases files
+redis_server_databases_dir: /var/lib/redis
+
+# database filename
+redis_server_dbfilename: dump.rdb
+
+# allow replica readonly with yes/no
+redis_server_replica_readonly: 'yes'
+
+# set priority to replicas
+redis_server_replica_priority: 100
+
+# allow replica server stale data
+redis_server_replica_serve_stale_data: 'yes'
+
+# maxclients number
+redis_server_maxclients: 10000
+
+# server limitnofile
+redis_server_limitnofile: 65535
+
+# max memory policy allowed
+redis_server_maxmemory_policy: allkeys-lru
+
+# max memory samples allowed
+redis_server_maxmemory_samples: 5
+
+# max memory available
+redis_server_maxmemory: "{{ [ansible_memtotal_mb * 1024 * 1024 - 1073741824, (ansible_memtotal_mb * 1024 * 1024 * 0.8) | int] | max }}"
+
+# redis server password
+redis_server_password: null
 
 # Sentinel
+
+# enable sentinel feature for HA
 redis_sentinel_enabled: false
+
+# sentinel version to install
 redis_sentinel_version: "{{ redis_server_version }}"
+
+# daemonize redis sentinel
 redis_sentinel_daemonize: true
-redis_sentinel_listen: 127.0.0.1
+
+# listen address for sentinel
+redis_sentinel_listen: 0.0.0.0
+
+# port for listen address
 redis_sentinel_port: 26379
-redis_sentinel_logdir: "{{ redis_logdir }}"
+
+# logdir path for sentinel
+redis_sentinel_logdir: "{{ redis_server_logdir }}"
+
+# sentinel logfile
 redis_sentinel_logfile: "redis-sentinel_{{ redis_sentinel_port }}.log"
-redis_sentinel_databases_dir: "{{ redis_databases_dir }}"
+
+# sentinel database directory
+redis_sentinel_databases_dir: "{{ redis_server_databases_dir }}"
+
+# redis sentinel quorum
 redis_sentinel_quorum: 2
+
+# redis sentinel downafter
 redis_sentinel_downafter: 10000
+
+# failover timeout
 redis_sentinel_failover_timeout: 30000

@@ -1,41 +1,49 @@
 ---
-- name: server | Mask redis-server service
-  systemd:
+- name: Set overcommit_memory = 1
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: "1"
+    sysctl_file: /etc/sysctl.d/redis_ansible_role.conf
+    sysctl_set: true
+  tags: molecule-notest
+
+- name: Server | Mask redis-server service
+  ansible.builtin.systemd:
     name: redis-server.service
     masked: true
 
-- name: server | Create systemd unit file for redis
-  template:
+- name: Server | Create systemd unit file for redis
+  ansible.builtin.template:
     src: etc/systemd/system/redis-server@.service.j2
-    dest: /etc/systemd/system/redis-server@.service
+    dest: "/etc/systemd/system/redis-server@{{ redis_server_port }}.service"
     owner: root
     group: root
     mode: 0440
-  register: redis_server_service
+  register: _redis_server_service
 
-- name: server | Delete default redis configuration file
-  file:
+- name: Server | Delete default redis configuration file
+  ansible.builtin.file:
     path: /etc/redis/redis.conf
     state: absent
 
-- name: server | Configure redis
-  template:
+- name: Server | Configure redis
+  ansible.builtin.template:
     src: etc/redis/redis.conf.j2
-    dest: /etc/redis/redis_{{ redis_port }}.conf
+    dest: /etc/redis/redis_{{ redis_server_port }}.conf
     mode: 0440
     owner: redis
     group: redis
-  notify: redis-server restart
+  notify: Redis-server restart
 
-- name: server | Activate redis service
-  systemd:
-    name: redis-server@{{ redis_port }}.service
+- name: Server | Activate redis service
+  ansible.builtin.systemd:
+    name: redis-server@{{ redis_server_port }}.service
     masked: false
     enabled: true
-    daemon_reload: "{{ redis_server_service is changed }}"
+    daemon_reload: "{{ _redis_server_service is changed }}"
 
-- name: server | Check service Redis is started
-  systemd:
-    name: redis-server@{{ redis_port }}.service
+- name: Server | Check service Redis is started
+  ansible.builtin.systemd:
+    name: redis-server@{{ redis_server_port }}.service
     state: started
-  register: systemctl_start_redis_server
+  register: _redis_server_systemctl_start

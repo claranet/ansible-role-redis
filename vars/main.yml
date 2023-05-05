@@ -1,9 +1,10 @@
 ---
 # vars file for role
-redis_master_host_: >-
+_redis_master_host: >-
   {%- for host in redis_group -%}
   {%-   if hostvars[host].redis_role == 'master' -%}
-  {{      host }}
+    {{ host }}
   {%-   endif -%}
   {%- endfor -%}
-redis_master_host_ip_: "{{ redis_master_ip | default(hostvars[ redis_master_host_ ].ansible_all_ipv4_addresses | ipaddr(redis_peering_network) | first, true)}}"
+
+_redis_master_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] if _redis_master_host == '' else (hostvars[_redis_master_host]['ansible_all_ipv4_addresses'] | first) }}"

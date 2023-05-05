@@ -1,0 +1,42 @@
+---
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg
+      - procps
+    state: present
+    update_cache: true
+    force: true
+
+- name: Add apt key for redis
+  ansible.builtin.apt_key:
+    url: https://packages.redis.io/gpg
+    keyring: /usr/share/keyrings/redis-archive-keyring.gpg
+    state: present
+
+- name: Add redis repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb {{ ansible_distribution_release }} main"
+    state: present
+    filename: redis
+
+- name: Get redis list of packages to install
+  ansible.builtin.set_fact:
+    _redis_server_version_format: "{{ '' if (redis_server_version == 'latest') else ('=' + redis_server_version + '*') }}"
+    _redis_sentinel_version_format: "{{ '' if (redis_sentinel_version == 'latest') else ('=' + redis_sentinel_version + '*') }}"
+
+- name: Specify version of packages when it's defined
+  ansible.builtin.set_fact:
+    _redis_packages_list: >-
+      {%- if redis_sentinel_enabled -%}
+        redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
+      {%- else -%}
+        redis{{ _redis_server_version_format }}
+      {%- endif -%}
+
+- name: Install redis packages
+  ansible.builtin.apt:
+    name: "{{ _redis_packages_list | split(',') }}"
+    force: true
+    update_cache: true

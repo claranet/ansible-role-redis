@@ -66,7 +66,7 @@ logfile "{{ redis_sentinel_logdir }}/{{ redis_sentinel_logfile }}"
 dir "{{ redis_sentinel_databases_dir }}"
 
 # sentinel monitor <master-name> <ip> <redis-port> <quorum>
-sentinel monitor mymaster {{ redis_master_host_ip_ }} {{ redis_port }} {{ redis_sentinel_quorum }}
+sentinel monitor mymaster {{ _redis_master_ip }} {{ redis_server_port }} {{ redis_sentinel_quorum }}
 
 
 #
@@ -88,8 +88,8 @@ sentinel monitor mymaster {{ redis_master_host_ip_ }} {{ redis_port }} {{ redis
 sentinel myid {{ ansible_machine_id | hash('sha1') }}
 
 # sentinel auth-pass <master-name> <password>
-{% if redis_password is not none %}
-sentinel auth-pass mymaster {{ redis_password }}
+{% if redis_server_password is not none %}
+sentinel auth-pass mymaster {{ redis_server_password }}
 {% endif %}
 #
 # Set the password to use to authenticate with the master and replicas.
