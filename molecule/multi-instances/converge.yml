@@ -3,7 +3,7 @@
   hosts: all
   vars:
     redis_sentinel_enabled: false
-    redis_server_version: 6:7.0.10
+    redis_server_version: "latest"
   roles:
     - role: claranet.redis
 
@@ -11,7 +11,7 @@
   hosts: all
   vars:
     redis_sentinel_enabled: false
-    redis_server_version: 6:7.0.10
+    redis_server_version: "latest"
     redis_server_port: 6378
   roles:
     - role: claranet.redis
