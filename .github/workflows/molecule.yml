@@ -58,6 +58,8 @@ jobs:
         scenario: ${{ fromJson(needs.setup.outputs.scenarios) }}
         config:
           - image: "debian"
+            tag: "12"
+          - image: "debian"
             tag: "11"
           - image: "debian"
             tag: "10"
