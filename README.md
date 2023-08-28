@@ -117,9 +117,9 @@ all:
         master:
           redis_role: master
         slave-01:
-          redis_role: slave
+          redis_role: replica
         slave-02:
-          redis_role: slave
+          redis_role: replica
 ```
 
 **playbook**
@@ -147,9 +147,9 @@ all:
         master:
           redis_role: master
         slave-01:
-          redis_role: slave
+          redis_role: replica
         slave-02:
-          redis_role: slave
+          redis_role: replica
 ```
 
 **playbook**
