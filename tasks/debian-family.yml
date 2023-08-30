@@ -30,9 +30,9 @@
   ansible.builtin.set_fact:
     _redis_packages_list: >-
       {%- if redis_sentinel_enabled -%}
-        redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
+        redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
       {%- else -%}
-        redis{{ _redis_server_version_format }}
+        redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}
       {%- endif -%}
 
 - name: Install redis packages
