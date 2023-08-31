@@ -40,3 +40,4 @@
     name: "{{ _redis_packages_list | split(',') }}"
     force: true
     update_cache: true
+    policy_rc_d: 101

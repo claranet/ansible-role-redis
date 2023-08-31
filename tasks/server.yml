@@ -7,11 +7,6 @@
     sysctl_set: true
   tags: molecule-notest
 
-- name: Server | Stop Redis-server service
-  ansible.builtin.systemd:
-    name: redis-server.service
-    state: stopped
-
 - name: Server | Mask redis-server service
   ansible.builtin.systemd:
     name: redis-server.service

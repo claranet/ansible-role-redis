@@ -1,9 +1,4 @@
 ---
-- name: Sentinel | Stop Redis-sentinel service
-  ansible.builtin.systemd:
-    name: redis-sentinel.service
-    state: stopped
-
 - name: Sentinel | Mask redis-sentinel service
   ansible.builtin.systemd:
     name: redis-sentinel.service
