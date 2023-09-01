@@ -10,7 +10,7 @@
     - _redis_server_systemctl_start is defined
     - _redis_server_systemctl_start is not changed
 
-- name: Redis-sentinel reload
+- name: Redis-sentinel restart
   ansible.builtin.systemd:
     name: "redis-sentinel@{{ redis_sentinel_port }}.service"
-    state: reloaded
+    state: restarted
