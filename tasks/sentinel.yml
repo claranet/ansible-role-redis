@@ -52,7 +52,7 @@
     owner: redis
     group: redis
     mode: 0640
-  notify: Redis-sentinel reload
+  notify: Redis-sentinel restart
   when: >-
     _redis_sentinel_config_rewrite.found is not defined
     or
@@ -65,3 +65,4 @@
     state: started
     enabled: true
     daemon_reload: "{{ _redis_sentinel_service is changed }}"
+  register: _systemctl_start_redis_sentinel_
