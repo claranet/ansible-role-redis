@@ -11,6 +11,13 @@
     - _redis_server_systemctl_start is not changed
 
 - name: Redis-sentinel restart
-  ansible.builtin.systemd:
-    name: "redis-sentinel@{{ redis_sentinel_port }}.service"
-    state: restarted
+  ansible.builtin.debug:
+    msg:
+      - "****"
+      - "**** !!! MANUAL RESTART NEEDED !!!"
+      - "**** Configuration files changed, you have to restart redis sentinel manually"
+      - "****"
+  when: >-
+    (systemctl_start_redis_sentinel_ is not defined)
+    or
+    (systemctl_start_redis_sentinel_.status.ActiveState != "inactive")
