@@ -15,6 +15,6 @@
     name: "redis-sentinel@{{ redis_sentinel_port }}.service"
     state: restarted
   when: >-
-    (systemctl_start_redis_sentinel_ is not defined)
+    (_systemctl_start_redis_sentinel_ is not defined)
     or
-    (systemctl_start_redis_sentinel_.status.ActiveState != "inactive")
+    (_systemctl_start_redis_sentinel_.status.ActiveState != "inactive")
