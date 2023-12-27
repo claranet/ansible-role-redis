@@ -43,7 +43,7 @@
 
 - name: Install redis packages
   ansible.builtin.apt:
-    name: "{{ _redis_packages_list | split(',') }}"
+    name: "{{ _redis_packages_list | split(', ') }}"
     allow_downgrade: true
     allow_change_held_packages: true
     update_cache: true
@@ -53,4 +53,4 @@
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
-  loop: "{{ _redis_hold_list | split(',') }}"
+  loop: "{{ _redis_hold_list | split(', ') }}"
