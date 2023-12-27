@@ -30,15 +30,15 @@
   ansible.builtin.set_fact:
     _redis_packages_list: >-
       {%- if redis_sentinel_enabled -%}
-        redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
+        redis-server{{ _redis_server_version_format }}, redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
       {%- else -%}
         redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}
       {%- endif -%}
     _redis_hold_list: >-
       {%- if redis_sentinel_enabled -%}
-        redis-server, redis-tools, redis, redis-sentinel
+        redis-server redis-tools redis redis-sentinel
       {%- else -%}
-        redis-server, redis-tools, redis
+        redis-server redis-tools redis
       {%- endif -%}
 
 - name: Install redis packages
@@ -51,5 +51,5 @@
 
 - name: hold redis packages
   ansible.builtin.dpkg_selections:
-    name: "{{ _redis_hold_list | split(',') }}"
+    name: "{{ _redis_hold_list }}"
     selection: hold
