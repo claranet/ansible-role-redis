@@ -48,13 +48,13 @@ redis_server_maxclients               | **10000**                               
 redis_server_limitnofile              | **65535**                                          | server limitnofile
 redis_server_maxmemory_policy         | **allkeys-lru**                                    | max memory policy
 redis_server_maxmemory_samples        | **5**                                              | max memory samples allowed
-redis_server_maxmemory                | **'{{ autocalculated | int }}'**                   | max memory available
+redis_server_maxmemory                | **'{{ autocalculated \| int }}'**                  | max memory available
 redis_server_password                 | **null**                                           | redis server password
-redis_lazyfree_lazy_eviction          | **no**                                             | redis lazyfree lazy eviction
-redis_lazyfree_lazy_expire            | **no**                                             | redis lazyfree lazy expire
-redis_lazyfree_lazy_server_del        | **no**                                             | redis lazyfree lazy server del
-redis_replica_lazy_flush              | **no**                                             | redis replica lazy flush
-redis_appendonly                      | **no**                                             | redis append only mode
+redis_lazyfree_lazy_eviction          | **"no"**                                           | redis lazyfree lazy eviction
+redis_lazyfree_lazy_expire            | **"no"**                                           | redis lazyfree lazy expire
+redis_lazyfree_lazy_server_del        | **"no"**                                           | redis lazyfree lazy server del
+redis_replica_lazy_flush              | **"no"**                                           | redis replica lazy flush
+redis_appendonly                      | **"no"**                                           | redis append only mode
 redis_appendfilename                  | **{{ redis_server_port }}.aof**                    | redis append filename
 redis_sentinel_version                | **'{{ redis_server_version }}'**                   | sentinel version to install
 redis_sentinel_enabled                | **false**                                          | sentinel version to install
