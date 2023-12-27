@@ -37,10 +37,10 @@ redis_server_timeout                  | **0**                                   
 redis_server_tcp_keepalive            | **300**                                            | server tcp keepalive
 redis_server_loglevel                 | **notice**                                         | server log level
 redis_server_logdir                   | **/var/log/redis**                                 | path to log directory
-redis_server_logfile                  | **redis-server_{{ redis_server_port }}.log**       | name of redis log file 
+redis_server_logfile                  | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
 redis_server_databases_number         | **16**                                             | number of databases
 redis_server_databases_dir            | **/var/lib/redis**                                 | path of databases files
-redis_server_dbfilename               | **dump.rdb**                                       | database filename
+redis_server_dbfilename               | **{{ redis_server_port }}.rdb**                    | database filename
 redis_server_replica_readonly         | **yes**                                            | allow replica readonly with yes/no
 redis_server_replica_priority         | **100**                                            | set priority to replicas
 redis_server_replica_serve_stale_data | **yes**                                            | allow replica server stale data
@@ -50,6 +50,12 @@ redis_server_maxmemory_policy         | **allkeys-lru**                         
 redis_server_maxmemory_samples        | **5**                                              | max memory samples allowed
 redis_server_maxmemory                | **'{{ autocalculated | int }}'**                   | max memory available
 redis_server_password                 | **null**                                           | redis server password
+redis_lazyfree_lazy_eviction          | **no**                                             | redis lazyfree lazy eviction
+redis_lazyfree_lazy_expire            | **no**                                             | redis lazyfree lazy expire
+redis_lazyfree_lazy_server_del        | **no**                                             | redis lazyfree lazy server del
+redis_replica_lazy_flush              | **no**                                             | redis replica lazy flush
+redis_appendonly                      | **no**                                             | redis append only mode
+redis_appendfilename                  | **{{ redis_server_port }}.aof**                    | redis append filename
 redis_sentinel_version                | **'{{ redis_server_version }}'**                   | sentinel version to install
 redis_sentinel_enabled                | **false**                                          | sentinel version to install
 redis_sentinel_daemonize              | **true**                                           | daemonize redis sentinel

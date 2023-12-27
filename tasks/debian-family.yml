@@ -38,6 +38,12 @@
 - name: Install redis packages
   ansible.builtin.apt:
     name: "{{ _redis_packages_list | split(',') }}"
-    force: true
+    allow_downgrade: true
+    allow_change_held_packages: true
     update_cache: true
     policy_rc_d: 101
+
+- name: hold redis packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ _redis_packages_list | split(',') }}"
+    selection: hold
