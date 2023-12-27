@@ -34,6 +34,12 @@
       {%- else -%}
         redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}
       {%- endif -%}
+    _redis_hold_list: >-
+      {%- if redis_sentinel_enabled -%}
+        redis-server, redis-tools, redis, redis-sentinel
+      {%- else -%}
+        redis-server, redis-tools, redis
+      {%- endif -%}
 
 - name: Install redis packages
   ansible.builtin.apt:
@@ -45,5 +51,5 @@
 
 - name: hold redis packages
   ansible.builtin.dpkg_selections:
-    name: "{{ _redis_packages_list | split(',') }}"
+    name: "{{ _redis_hold_list | split(',') }}"
     selection: hold
