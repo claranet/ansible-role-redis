@@ -45,12 +45,12 @@
   ansible.builtin.apt:
     name: "{{ _redis_packages_list | split(', ') }}"
     allow_downgrade: true
-    allow_change_held_packages: true
     update_cache: true
     policy_rc_d: 101
 
-- name: hold redis packages
-  ansible.builtin.dpkg_selections:
-    name: "{{ item }}"
-    selection: hold
-  loop: "{{ _redis_hold_list | split(', ') }}"
+- name: pin redis version to "{{ redis_server_version }}"
+  ansible.builtin.template:
+    src: etc/apt/preferences.d/99-ansible-redis.pref
+    dest: /etc/apt/preferences.d/
+    mode: "0444"
+  when: redis_server_version != 'latest'
