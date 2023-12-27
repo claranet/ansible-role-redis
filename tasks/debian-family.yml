@@ -53,5 +53,4 @@
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
-  loop:
-    - "{{ _redis_hold_list | split(',') }}"
+  loop: "{{ _redis_hold_list | split(',') }}"
