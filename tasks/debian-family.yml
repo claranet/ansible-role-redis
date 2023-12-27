@@ -48,7 +48,7 @@
     update_cache: true
     policy_rc_d: 101
 
-- name: pin redis version to "{{ redis_server_version }}"
+- name: pin redis version to {{ redis_server_version }}
   ansible.builtin.template:
     src: etc/apt/preferences.d/99-ansible-redis.pref
     dest: /etc/apt/preferences.d/
