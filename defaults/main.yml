@@ -75,19 +75,19 @@ redis_server_maxmemory: "{{ [ansible_memtotal_mb * 1024 * 1024 - 1073741824, (an
 redis_server_password: null
 
 # redis lazyfree lazy eviction
-redis_lazyfree_lazy_eviction: no
+redis_lazyfree_lazy_eviction: "no"
 
 # redis lazyfree lazy expire
-redis_lazyfree_lazy_expire: no
+redis_lazyfree_lazy_expire: "no"
 
 # redis lazyfree lazy server del
-redis_lazyfree_lazy_server_del: no
+redis_lazyfree_lazy_server_del: "no"
 
 # redis replica lazy flush
-redis_replica_lazy_flush: no
+redis_replica_lazy_flush: "no"
 
 # redis append only mode
-redis_appendonly: no
+redis_appendonly: "no"
 
 # redis appendfilename
 redis_appendfilename: "{{ redis_server_port }}.aof"
