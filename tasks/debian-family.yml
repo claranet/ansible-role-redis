@@ -30,14 +30,27 @@
   ansible.builtin.set_fact:
     _redis_packages_list: >-
       {%- if redis_sentinel_enabled -%}
-        redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
+        redis-server{{ _redis_server_version_format }}, redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}, redis-sentinel{{ _redis_sentinel_version_format }}
       {%- else -%}
-        redis-server{{ _redis_server_version_format }},  redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}
+        redis-server{{ _redis_server_version_format }}, redis-tools{{ _redis_server_version_format }}, redis{{ _redis_server_version_format }}
+      {%- endif -%}
+    _redis_hold_list: >-
+      {%- if redis_sentinel_enabled -%}
+        redis-server, redis-tools, redis, redis-sentinel
+      {%- else -%}
+        redis-server, redis-tools, redis
       {%- endif -%}
 
 - name: Install redis packages
   ansible.builtin.apt:
-    name: "{{ _redis_packages_list | split(',') }}"
-    force: true
+    name: "{{ _redis_packages_list | split(', ') }}"
+    allow_downgrade: true
     update_cache: true
     policy_rc_d: 101
+
+- name: pin redis version to {{ redis_server_version }}
+  ansible.builtin.template:
+    src: etc/apt/preferences.d/99-ansible-redis.pref
+    dest: /etc/apt/preferences.d/
+    mode: "0444"
+  when: redis_server_version != 'latest'

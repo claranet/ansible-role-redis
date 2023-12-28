@@ -254,7 +254,7 @@ rdbcompression yes
 rdbchecksum yes
 
 # The filename where to dump the DB
-dbfilename {{ redis_server_port }}.rdb
+dbfilename {{ redis_server_dbfilename }}
 
 # The working directory.
 #
@@ -687,10 +687,10 @@ maxmemory-samples {{ redis_server_maxmemory_samples }}
 # in order to instead release memory in a non-blocking way like if UNLINK
 # was called, using the following configuration directives:
 
-lazyfree-lazy-eviction no
-lazyfree-lazy-expire no
-lazyfree-lazy-server-del no
-replica-lazy-flush no
+lazyfree-lazy-eviction {{ redis_lazyfree_lazy_eviction }}
+lazyfree-lazy-expire {{ redis_lazyfree_lazy_expire }}
+lazyfree-lazy-server-del {{ redis_lazyfree_lazy_server_del }}
+replica-lazy-flush {{ redis_replica_lazy_flush }}
 
 ############################## APPEND ONLY MODE ###############################
 
@@ -712,11 +712,11 @@ replica-lazy-flush no
 #
 # Please check http://redis.io/topics/persistence for more information.
 
-appendonly no
+appendonly {{ redis_appendonly }}
 
 # The name of the append only file (default: "appendonly.aof")
 
-appendfilename "appendonly.aof"
+appendfilename {{ redis_appendfilename }}
 
 # The fsync() call tells the Operating System to actually write data on disk
 # instead of waiting for more data in the output buffer. Some OS will really flush

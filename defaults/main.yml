@@ -45,7 +45,7 @@ redis_server_databases_number: 16
 redis_server_databases_dir: /var/lib/redis
 
 # database filename
-redis_server_dbfilename: dump.rdb
+redis_server_dbfilename: "{{ redis_server_port }}.dbf"
 
 # allow replica readonly with yes/no
 redis_server_replica_readonly: 'yes'
@@ -73,6 +73,24 @@ redis_server_maxmemory: "{{ [ansible_memtotal_mb * 1024 * 1024 - 1073741824, (an
 
 # redis server password
 redis_server_password: null
+
+# redis lazyfree lazy eviction
+redis_lazyfree_lazy_eviction: "no"
+
+# redis lazyfree lazy expire
+redis_lazyfree_lazy_expire: "no"
+
+# redis lazyfree lazy server del
+redis_lazyfree_lazy_server_del: "no"
+
+# redis replica lazy flush
+redis_replica_lazy_flush: "no"
+
+# redis append only mode
+redis_appendonly: "no"
+
+# redis appendfilename
+redis_appendfilename: "{{ redis_server_port }}.aof"
 
 # Sentinel
 
