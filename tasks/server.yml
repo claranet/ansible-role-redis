@@ -28,7 +28,7 @@
 
 - name: Server | Configure redis
   ansible.builtin.template:
-    src: etc/redis/redis_{{ _minor_version }}.conf.j2
+    src: etc/redis/redis_{{ _config_version }}.conf.j2
     dest: /etc/redis/redis_{{ redis_server_port }}.conf
     mode: 0440
     owner: redis
