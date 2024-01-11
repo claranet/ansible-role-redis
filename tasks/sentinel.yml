@@ -47,7 +47,7 @@
 
 - name: Sentinel | Configure redis-sentinel
   ansible.builtin.template:
-    src: etc/redis/sentinel.conf.j2
+    src: etc/redis/sentinel_{{ _minor_version }}.conf.j2
     dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
     owner: redis
     group: redis
