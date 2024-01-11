@@ -13,6 +13,7 @@ def test_file_config(host):
     file = host.file("/etc/redis/redis_6379.conf")
     assert file.exists
     assert file.user == "redis"
+    assert file.contains("Version 6.2")
 
 
 def test_redis_listening(host):
