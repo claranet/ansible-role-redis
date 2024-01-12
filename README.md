@@ -54,6 +54,7 @@ redis_lazyfree_lazy_eviction          | **"no"**                                
 redis_lazyfree_lazy_expire            | **"no"**                                           | redis lazyfree lazy expire
 redis_lazyfree_lazy_server_del        | **"no"**                                           | redis lazyfree lazy server del
 redis_replica_lazy_flush              | **"no"**                                           | redis replica lazy flush
+redis_lazyfree_lazy_user_del          | **"no"**                                           | redis replica lazy user del
 redis_appendonly                      | **"no"**                                           | redis append only mode
 redis_appendfilename                  | **{{ redis_server_port }}.aof**                    | redis append filename
 redis_sentinel_version                | **'{{ redis_server_version }}'**                   | sentinel version to install

@@ -10,7 +10,7 @@ platforms:
   # On "${name:-${image:-debian}", the last brace does not miss, it works like that...
   # The env var should be used when the image variable refers to a full registry path like registry.access.redhat.com/ubi8/ubi
   - &instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_master
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_master
     image: ${image:-debian}:${tag:-latest}
     privileged: true
     tty: true
@@ -27,10 +27,10 @@ platforms:
       - redis
 
   - <<: *instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica1
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica1
 
   - <<: *instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica2
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica2
 
 
 provisioner:
@@ -41,13 +41,13 @@ provisioner:
     v: true
   inventory:
     host_vars:
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_master:
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_master:
         redis_role: master
         test: master1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica1:
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica1:
         redis_role: replica
         test: replica1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-default}_replica2:
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica2:
         redis_role: replica
         name: replica2
 

@@ -86,6 +86,9 @@ redis_lazyfree_lazy_server_del: "no"
 # redis replica lazy flush
 redis_replica_lazy_flush: "no"
 
+# redis replica lazy user del
+redis_lazyfree_lazy_user_del: "no"
+
 # redis append only mode
 redis_appendonly: "no"
 
