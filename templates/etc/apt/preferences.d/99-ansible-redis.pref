@@ -2,9 +2,11 @@ Package: redis
 Pin: version {{ redis_server_version }}*
 Pin-Priority: 900
 
+{% if redis_server_enabled %}
 Package: redis-server
 Pin: version {{ redis_server_version }}*
 Pin-Priority: 900
+{% endif %}
 
 Package: redis-tools
 Pin: version {{ redis_server_version }}*

@@ -10,3 +10,5 @@ _redis_master_host: >-
 _redis_master_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] if _redis_master_host == '' else (hostvars[_redis_master_host]['ansible_all_ipv4_addresses'] | first) }}"
 
 _config_version: "{% if redis_server_version == 'latest' or redis_server_version is version('6:7.2', '>=' ) %}7.2{% elif redis_server_version is version('6:6.2', '<' ) %}6.0{% elif redis_server_version is version('6:7.0', '<' ) %}6.2{% elif redis_server_version is version('6:7.2', '<' ) %}7.0{% endif %}"
+
+_redis_conf_final: "{{ redis_conf_default |combine(redis_conf) | dict2items | rejectattr('value', 'equalto', '') | list | items2dict }}"

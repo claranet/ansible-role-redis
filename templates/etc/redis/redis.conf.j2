@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+# Version {{ _config_version }}
+
+################################## INCLUDES ###################################
+
+{% for include in redis_includes %}
+include {{ include }}
+{% endfor %}
+
+################################## MODULES #####################################
+
+{% for module in redis_modules %}
+loadmodule {{ module }}
+{% endfor %}
+
+################################## CONFIG #####################################
+
+databases {{ redis_server_databases_number }}
+
+{% for key, value in _redis_conf_final.items() %}
+{{ key }} {{ value }}
+
+{% endfor %}
+{% if redis_role is defined and redis_role == "replica" %}
+replicaof {{ _redis_master_ip }} {{ redis_server_port }}
+{% endif %}

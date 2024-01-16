@@ -105,7 +105,7 @@ sentinel myid {{ ansible_machine_id | hash('sha1') }}
 # Example:
 #
 # sentinel auth-pass mymaster MySUPER--secret-0123passw0rd
-{% if redis_server_password is not none %}
+{% if redis_server_password is defined %}
 sentinel auth-pass mymaster {{ redis_server_password }}
 {% endif %}
 
@@ -229,7 +229,7 @@ sentinel parallel-syncs mymaster 1
 #   the exact parallel-syncs progression as specified.
 #
 # Default is 3 minutes.
-sentinel failover-timeout mymaster {{ redis_sentinel_failover_timeout }}
+sentinel failover-timeout mymaster {{ redis_sentinel_failover_timeout }}
 
 # SCRIPTS EXECUTION
 #

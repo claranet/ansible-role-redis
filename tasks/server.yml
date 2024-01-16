@@ -28,7 +28,7 @@
 
 - name: Server | Configure redis
   ansible.builtin.template:
-    src: etc/redis/redis_{{ _config_version }}.conf.j2
+    src: etc/redis/redis.conf.j2
     dest: /etc/redis/redis_{{ redis_server_port }}.conf
     mode: 0440
     owner: redis
@@ -47,3 +47,24 @@
     name: redis-server@{{ redis_server_port }}.service
     state: started
   register: _redis_server_systemctl_start
+
+- name: ensure redis conf is set with password
+  community.general.redis:
+    command: config
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  loop: "{{ _redis_conf_final | dict2items }}"
+  when: redis_server_password is defined
+
+- name: ensure redis conf is set without password
+  community.general.redis:
+    command: config
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+  loop: "{{ _redis_conf_final | dict2items }}"
+  when: redis_server_password is not defined

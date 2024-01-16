@@ -66,3 +66,43 @@
     enabled: true
     daemon_reload: "{{ _redis_sentinel_service is changed }}"
   register: _systemctl_start_redis_sentinel_
+
+- name: Sentinel | set replica with password
+  community.general.redis:
+    command: replica
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  when: redis_server_password is defined and redis_role == "replica"
+
+- name: Sentinel | set master with password
+  community.general.redis:
+    command: replica
+    replica_mode: master
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  when: redis_server_password is defined and redis_role == "master"
+
+- name: Sentinel | set replica without password
+  community.general.redis:
+    command: replica
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+  when: redis_role == "replica"
+
+- name: Sentinel | set master without password
+  community.general.redis:
+    command: replica
+    replica_mode: master
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: 127.0.0.1
+    login_port: "{{ redis_server_port }}"
+  when: redis_role == "master"
