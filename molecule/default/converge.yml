@@ -1,8 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  collections:
-    - community.general
   vars:
     redis_sentinel_enabled: false
     redis_server_version: "latest"
