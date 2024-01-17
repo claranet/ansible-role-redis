@@ -14,7 +14,6 @@ Install and configure Redis
 ## :warning: Requirements
 
 Ansible >= 2.10
-community.general >= 2.0.0
 
 ## :zap: Installation
 
@@ -56,12 +55,11 @@ redis_sentinel_quorum                 | **2**                                   
 redis sentinel downafter              | **10000**                                          | time for downafter
 redis_sentinel_failover_timeout       | **30000**                                          | failover timeout
 
-The available variables for each release of redis can be found in the self documented configuration files available [here](https://redis.io/docs/management/config/)
-
+All other redis parameters have default values
 
 ## :arrows_counterclockwise: Dependencies
 
-N/A
+community.general >= 2.0.0
 
 ## :pencil2: Example Playbook
 
@@ -106,6 +104,8 @@ N/A
     - role: claranet.redis
 ```
 
+The available parameters for each release of redis can be found in the self documented configuration files available [here](https://redis.io/docs/management/config/)
+
 * #### Multi-instance scenario
 
 ```yaml
@@ -125,6 +125,7 @@ N/A
   roles:
     - role: claranet.redis
 ```
+If installing a previous release of redis, both instances should be the same
 
 * #### Master slave scenario
 
