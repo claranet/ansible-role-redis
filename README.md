@@ -33,8 +33,8 @@ redis_server_user                     | **redis**                               
 redis_server_group                    | **redis**                                          | group for redis
 redis_server_logdir                   | **/var/log/redis**                                 | path to log directory
 redis_server_databases_number         | **16**                                             | number of databases
+redis_server_port                     | **6379**                                           | listen port
 redis_conf.bind                       | **0.0.0.0**                                        | listen address
-redis_conf.port                       | **6379**                                           | listen port
 redis_conf.supervised                 | **systemd**                                        | Supervision option
 redis_conf.pidfile                    | **/var/run/redis_{{ redis_server_port }}.pid**     | pid file for systemd service
 redis_conf.logfile                    | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
@@ -126,7 +126,7 @@ The available parameters for each release of redis can be found in the self docu
   roles:
     - role: claranet.redis
 ```
-If installing a previous release of redis, both instances should be the same
+If installing a previous release of redis, both instances should be the same version
 
 * #### Master slave scenario
 
