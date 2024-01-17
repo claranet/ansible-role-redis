@@ -31,18 +31,19 @@ redis_group                           | **groups.redis**                        
 redis_server_version                  | **latest**                                         | redis version to install
 redis_server_user                     | **redis**                                          | redis user for configuration
 redis_server_group                    | **redis**                                          | group for redis
-redis_server_listen                   | **0.0.0.0**                                        | listen address
-redis_server_port                     | **6379**                                           | listen port
-supervised                            | **systemd**                                        | Supervision option
-pidfile                               | **/var/run/redis_{{ redis_server_port }}.pid**     | Pid file for systemd service
 redis_server_logdir                   | **/var/log/redis**                                 | path to log directory
-redis_server_logfile                  | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
 redis_server_databases_number         | **16**                                             | number of databases
-redis_server_databases_dir            | **/var/lib/redis**                                 | path of databases files
-redis_server_dbfilename               | **{{ redis_server_port }}.rdb**                    | database filename
-redis_server_maxmemory_policy         | **allkeys-lru**                                    | max memory policy
-redis_server_maxmemory                | **'{{ autocalculated \| int }}'**                  | max memory available
-redis_appendfilename                  | **{{ redis_server_port }}.aof**                    | redis append filename
+redis_conf.bind                       | **0.0.0.0**                                        | listen address
+redis_conf.port                       | **6379**                                           | listen port
+redis_conf.supervised                 | **systemd**                                        | Supervision option
+redis_conf.pidfile                    | **/var/run/redis_{{ redis_server_port }}.pid**     | pid file for systemd service
+redis_conf.logfile                    | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
+redis_conf.dir                        | **/var/lib/redis**                                 | path of databases files
+redis_conf.dbfilename                 | **{{ redis_server_port }}.rdb**                    | database filename
+redis_conf.maxmemory-policy           | **allkeys-lru**                                    | max memory policy
+redis_conf.maxmemory                  | **'{{ autocalculated \| int }}'**                  | max memory available
+redis_conf.replica-priority           | **10 (master) / 100 (replica)**                    | replica priority
+redis_conf.appendfilename             | **{{ redis_server_port }}.aof**                    | redis append filename
 redis_sentinel_version                | **'{{ redis_server_version }}'**                   | sentinel version to install
 redis_sentinel_enabled                | **false**                                          | sentinel version to install
 redis_sentinel_daemonize              | **true**                                           | daemonize redis sentinel
