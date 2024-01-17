@@ -33,7 +33,6 @@
     mode: 0440
     owner: redis
     group: redis
-  notify: Redis-server restart
 
 - name: Server | Activate redis service
   ansible.builtin.systemd:
@@ -68,3 +67,15 @@
     login_port: "{{ redis_server_port }}"
   loop: "{{ _redis_conf_final | dict2items }}"
   when: redis_server_password is not defined
+
+- name: get databases parameters
+  ansible.builtin.shell: >-
+    redis-cli config get databases | tail -1
+  register: immutable
+  changed_when: false
+
+- name: require restart if databases changed
+  ansible.builtin.debug:
+    msg: "requested databases: {{ redis_server_databases_number }} , configured databases : {{ immutable.stdout }}"
+  notify: Redis-server restart
+  when: immutable.stdout != redis_server_databases_number
