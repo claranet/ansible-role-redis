@@ -1,7 +1,7 @@
 ---
 dependency:
-  name: galaxy
-  requirement-file: collections.yml
+  name: shell
+  command: python3 -m pip install pytest-testinfra && ansible-galaxy collection install community.general
 
 driver:
   name: docker
