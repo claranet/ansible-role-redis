@@ -52,7 +52,7 @@
     command: config
     name: "{{ item.key }}"
     value: "{{ item.value }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
     login_password: "{{ redis_server_password }}"
   loop: "{{ _redis_conf_final | dict2items }}"
@@ -63,19 +63,20 @@
     command: config
     name: "{{ item.key }}"
     value: "{{ item.value }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
   loop: "{{ _redis_conf_final | dict2items }}"
   when: redis_server_password is not defined
 
 - name: get databases parameters
   ansible.builtin.shell: >-
-    redis-cli config get databases | tail -1
+    redis-cli -p {{ redis_server_port }} -h {{ _redis_conf_final.bind }} {% if redis_server_password is defined %} -a {{ redis_server_password }} {% endif %} config get databases | tail -1
   register: immutable
   changed_when: false
 
 - name: require restart if databases changed
-  ansible.builtin.debug:
-    msg: "requested databases: {{ redis_server_databases_number }} , configured databases : {{ immutable.stdout }}"
+  ansible.builtin.assert:
+    that: immutable.stdout | int != redis_server_databases_number | int
+  changed_when: true
   notify: Redis-server restart
-  when: immutable.stdout != redis_server_databases_number
+  when: immutable.stdout | int != redis_server_databases_number | int

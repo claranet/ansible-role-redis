@@ -21,3 +21,19 @@ def test_file_config(host):
 def test_redis_listening(host):
     assert host.socket("tcp://0.0.0.0:6379").is_listening
     assert host.socket("tcp://0.0.0.0:6378").is_listening
+
+
+def test_redis_service(host):
+    redis_service_1 = host.service('redis-server@6379')
+    redis_service_2 = host.service('redis-server@6378')
+    assert redis_service_1.is_enabled
+    assert redis_service_1.is_running
+    assert redis_service_2.is_enabled
+    assert redis_service_2.is_running
+
+
+def test_redis_cli(host):
+    config_1 = host.check_output("redis-cli -p 6379 config get loglevel")
+    config_2 = host.check_output("redis-cli -p 6379 config get loglevel")
+    assert "notice" in config_1
+    assert "notice" in config_2

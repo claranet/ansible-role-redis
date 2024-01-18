@@ -5,6 +5,5 @@
     redis_sentinel_enabled: false
     redis_server_version: "latest"
     redis_server_password: "molecule"
-
   roles:
     - role: claranet.redis

@@ -72,7 +72,7 @@
     command: replica
     master_host: "{{ _redis_master_ip }}"
     master_port: "{{ redis_server_port }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
     login_password: "{{ redis_server_password }}"
   when: redis_server_password is defined and redis_role == "replica"
@@ -83,7 +83,7 @@
     replica_mode: master
     master_host: "{{ _redis_master_ip }}"
     master_port: "{{ redis_server_port }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
     login_password: "{{ redis_server_password }}"
   when: redis_server_password is defined and redis_role == "master"
@@ -93,7 +93,7 @@
     command: replica
     master_host: "{{ _redis_master_ip }}"
     master_port: "{{ redis_server_port }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
   when: redis_role == "replica"
 
@@ -103,6 +103,6 @@
     replica_mode: master
     master_host: "{{ _redis_master_ip }}"
     master_port: "{{ redis_server_port }}"
-    login_host: 127.0.0.1
+    login_host: "{{ _redis_conf_final.bind }}"
     login_port: "{{ redis_server_port }}"
   when: redis_role == "master"
