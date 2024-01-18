@@ -34,6 +34,7 @@ redis_server_group                    | **redis**                               
 redis_server_logdir                   | **/var/log/redis**                                 | path to log directory
 redis_server_databases_number         | **16**                                             | number of databases
 redis_server_port                     | **6379**                                           | listen port
+redis_server_password                 | **void**                                           | password for redis authentication
 redis_conf.bind                       | **0.0.0.0**                                        | listen address
 redis_conf.supervised                 | **systemd**                                        | Supervision option
 redis_conf.pidfile                    | **/var/run/redis_{{ redis_server_port }}.pid**     | pid file for systemd service
@@ -56,7 +57,9 @@ redis_sentinel_quorum                 | **2**                                   
 redis sentinel downafter              | **10000**                                          | time for downafter
 redis_sentinel_failover_timeout       | **30000**                                          | failover timeout
 
-All other redis parameters have default values
+All other redis parameters have default values .
+
+Custom configuration should be declared inside a <code>redis_conf</code> dictionnary (see example below)
 
 ## :arrows_counterclockwise: Dependencies
 
