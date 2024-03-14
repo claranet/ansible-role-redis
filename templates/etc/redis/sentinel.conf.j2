@@ -6,7 +6,7 @@
 {{ key }} {{ value }}
 {% endfor %}
 
-sentinel myid {{ ansible_machine_id | hash('sha1') }}
+sentinel myid {{ (ansible_machine_id + ansible_hostname) | hash('sha1') }}
 {% for key, value in _redis_sentinel_sentinel_conf_final.items() %}
 sentinel {{ key }} {{ value }}
 {% endfor %}
