@@ -45,9 +45,9 @@
   changed_when: false
   register: _redis_sentinel_config_rewrite
 
-- name: Sentinel | Configure redis-sentinel
+- name: Sentinel | Configure redis-sentinel first time install
   ansible.builtin.template:
-    src: etc/redis/sentinel_{{ _config_version }}.conf.j2
+    src: etc/redis/sentinel.conf.j2
     dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
     owner: redis
     group: redis
@@ -57,6 +57,34 @@
     _redis_sentinel_config_rewrite.found is not defined
     or
     _redis_sentinel_config_rewrite.found != 1
+
+- name: Sentinel | ensure redis-sentinel config is set
+  block:
+      - name: Sentinel | ensure redis-sentinel general config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "{{ item.key }} {{ item.value }}"
+          regexp: "^{{ item.key }}"
+        loop: "{{ _redis_sentinel_conf_final |dict2items }}"
+
+      - name: Sentinel | ensure redis-sentinel sentinel config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "sentinel {{ item.key }} {{ item.value }}"
+          regexp: "^sentinel {{ item.key }}"
+        loop: "{{ _redis_sentinel_sentinel_conf_final |dict2items }}"
+
+      - name: Sentinel | ensure redis-sentinel master config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "sentinel {{ item.key }} {{ redis_sentinel_master_name }} {{ item.value }}"
+          regexp: "^sentinel {{ item.key }} {{ redis_sentinel_master_name }}"
+        loop: "{{ _redis_sentinel_master_conf_final |dict2items }}"
+  notify: Redis-sentinel restart
+  when: >-
+    _redis_sentinel_config_rewrite.found is defined
+    and
+    _redis_sentinel_config_rewrite.found == 1
 
 - name: Sentinel | Activate redis-sentinel service
   ansible.builtin.systemd:

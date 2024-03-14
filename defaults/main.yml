@@ -17,6 +17,7 @@ redis_server_version: latest
 redis_server_user: redis
 redis_server_group: redis
 
+# listening port
 redis_server_port: 6379
 
 # set redis log directory path
@@ -38,8 +39,8 @@ redis_modules: {}
 redis_conf_default:
   bind: 0.0.0.0
   port: "{{ redis_server_port }}"
-  supervised: systemd
-  pidfile: /var/run/redis/redis-server_{{ redis_server_port }}.pid
+  supervised: "systemd"
+  pidfile: "/var/run/redis/redis-server_{{ redis_server_port }}.pid"
   protected-mode: "{{ 'yes' if redis_server_password is defined else 'no' }}"
   requirepass: "{{ redis_server_password if redis_server_password is defined else '' }}"
   masterauth: "{{ redis_server_password if redis_server_password is defined and redis_role is defined else '' }}"
@@ -63,9 +64,6 @@ redis_sentinel_enabled: false
 # sentinel version to install
 redis_sentinel_version: "{{ redis_server_version }}"
 
-# daemonize redis sentinel
-redis_sentinel_daemonize: true
-
 # listen address for sentinel
 redis_sentinel_listen: 0.0.0.0
 
@@ -84,8 +82,58 @@ redis_sentinel_databases_dir: "{{ redis_server_databases_dir }}"
 # redis sentinel quorum
 redis_sentinel_quorum: 2
 
+# redis sentinel master name
+redis_sentinel_master_name : "mymaster"
+
 # redis sentinel downafter
 redis_sentinel_downafter: 10000
 
 # failover timeout
 redis_sentinel_failover_timeout: 30000
+
+
+# Sentinel config format : <key> <value>
+redis_sentinel_conf_default:
+  bind: "{{ redis_sentinel_listen }}"
+  protected-mode: "no"
+  port: "{{ redis_sentinel_port }}"
+  daemonize: "yes"
+  pidfile: '"/var/run/sentinel/redis-sentinel_{{ redis_sentinel_port }}.pid"'
+  loglevel: "notice"
+  logfile: '"{{ redis_sentinel_logdir }}/{{ redis_sentinel_logfile }}"'
+  dir: '"{{ redis_sentinel_databases_dir }}"'
+
+redis_sentinel_conf: {}
+  # acllog-max-len: 128
+  # requirepass: <password>
+  # syslog-enabled: no
+  # syslog-ident: sentinel
+  # syslog-facility: local0
+
+
+# Sentinel config format : sentinel <key> <value>
+redis_sentinel_sentinel_conf_default:
+  deny-scripts-reconfig: "yes"
+
+redis_sentinel_sentinel_conf: {}
+  # announce-ip: <ip>
+  # announce-port: <port>
+  # sentinel-user: <username>
+  # sentinel-pass: <password>
+  # resolve-hostnames: no
+  # announce-hostnames: no
+
+
+# Sentinel config format : sentinel <key> {{ redis_sentinel_master_name }} <value>
+redis_sentinel_master_conf_default:
+  monitor: "{{ _redis_master_ip }} {{ redis_server_port }} {{ redis_sentinel_quorum }}"
+  down-after-milliseconds:  "{{ redis_sentinel_downafter }}"
+  auth-pass:  "{{ redis_server_password if redis_server_password is defined else '' }}"
+  failover-timeout: "{{ redis_sentinel_failover_timeout }}"
+
+redis_sentinel_master_conf: {}
+  # auth-user:  <username>
+  # parallel-syncs: <val>
+  # notification-script: /var/redis/notify.sh
+  # client-reconfig-script: /var/redis/reconfig.sh
+  # master-reboot-down-after-period: 0
