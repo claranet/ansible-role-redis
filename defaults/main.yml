@@ -61,6 +61,9 @@ redis_conf: {}
 # enable sentinel feature for HA
 redis_sentinel_enabled: false
 
+# daemonize redis sentinel
+redis_sentinel_daemonize: true
+
 # sentinel version to install
 redis_sentinel_version: "{{ redis_server_version }}"
 
@@ -97,7 +100,7 @@ redis_sentinel_conf_default:
   bind: "{{ redis_sentinel_listen }}"
   protected-mode: "no"
   port: "{{ redis_sentinel_port }}"
-  daemonize: "yes"
+  daemonize: "{{ redis_sentinel_daemonize | ternary('yes', 'no') }}"
   pidfile: '"/var/run/sentinel/redis-sentinel_{{ redis_sentinel_port }}.pid"'
   loglevel: "notice"
   logfile: '"{{ redis_sentinel_logdir }}/{{ redis_sentinel_logfile }}"'
