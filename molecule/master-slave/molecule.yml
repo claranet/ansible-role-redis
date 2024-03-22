@@ -43,13 +43,13 @@ provisioner:
     v: true
   inventory:
     host_vars:
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_master
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_master:
         redis_role: master
         test: master1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica1
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica1:
         redis_role: replica
         test: replica1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica2
+      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-master-slave}_replica2:
         redis_role: replica
         name: replica2
 
