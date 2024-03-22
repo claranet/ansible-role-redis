@@ -28,12 +28,11 @@
 
 - name: Server | Configure redis
   ansible.builtin.template:
-    src: etc/redis/redis_{{ _config_version }}.conf.j2
+    src: etc/redis/redis.conf.j2
     dest: /etc/redis/redis_{{ redis_server_port }}.conf
     mode: 0440
     owner: redis
     group: redis
-  notify: Redis-server restart
 
 - name: Server | Activate redis service
   ansible.builtin.systemd:
@@ -47,3 +46,37 @@
     name: redis-server@{{ redis_server_port }}.service
     state: started
   register: _redis_server_systemctl_start
+
+- name: ensure redis conf is set with password
+  community.general.redis:
+    command: config
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  loop: "{{ _redis_conf_final | dict2items }}"
+  when: redis_server_password is defined
+
+- name: ensure redis conf is set without password
+  community.general.redis:
+    command: config
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+  loop: "{{ _redis_conf_final | dict2items }}"
+  when: redis_server_password is not defined
+
+- name: get databases parameters
+  ansible.builtin.shell: >-
+    redis-cli -p {{ redis_server_port }} -h {{ _redis_conf_final.bind }} {% if redis_server_password is defined %} -a {{ redis_server_password }} {% endif %} config get databases | tail -1
+  register: immutable
+  changed_when: false
+
+- name: require restart if databases changed
+  ansible.builtin.assert:
+    that: immutable.stdout | int != redis_server_databases_number | int
+  changed_when: true
+  notify: Redis-server restart
+  when: immutable.stdout | int != redis_server_databases_number | int

@@ -4,7 +4,7 @@
     msg:
       - "****"
       - "**** !!! MANUAL RESTART NEEDED !!!"
-      - "**** Configuration files changed, you have to restart redis manually"
+      - "**** Immutable configuration changed, you have to restart redis manually"
       - "****"
   when:
     - _redis_server_systemctl_start is defined

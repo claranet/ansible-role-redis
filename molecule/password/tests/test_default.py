@@ -26,5 +26,7 @@ def test_redis_service(host):
 
 
 def test_redis_cli(host):
-    config = host.check_output("redis-cli -p 6379 config get loglevel")
-    assert "notice" in config
+    config_nopassw = host.check_output("redis-cli -p 6379 config get loglevel")
+    config_passwd = host.check_output("redis-cli -p 6379 -a molecule config get loglevel")
+    assert "Authentication required" in config_nopassw
+    assert "notice" in config_passwd

@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+# Version {{ _config_version }}
+
+
+{% for key, value in _redis_sentinel_conf_final.items() %}
+{{ key }} {{ value }}
+{% endfor %}
+
+sentinel myid {{ (ansible_machine_id + ansible_hostname) | hash('sha1') }}
+{% for key, value in _redis_sentinel_sentinel_conf_final.items() %}
+sentinel {{ key }} {{ value }}
+{% endfor %}
+
+{% for key, value in _redis_sentinel_master_conf_final.items() %}
+sentinel {{ key }} {{ redis_sentinel_master_name }} {{ value }}
+{% endfor %}
