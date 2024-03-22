@@ -32,23 +32,25 @@ platforms:
   - <<: *instance
     name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_replica2
 
-
 provisioner:
   name: ansible
   env:
     ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_LOAD_CALLBACK_PLUGINS: "true"
+    ANSIBLE_CALLBACKS_ENABLED: "ansible.posix.profile_tasks"
+    ANSIBLE_STDOUT_CALLBACK: "ansible.posix.debug"
   options:
     v: true
   inventory:
     host_vars:
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_master:
-        redis_role: master
+      ? claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_master
+      : redis_role: master
         test: master1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_replica1:
-        redis_role: replica
+      ? claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_replica1
+      : redis_role: replica
         test: replica1
-      claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_replica2:
-        redis_role: replica
+      ? claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-sentinel}_replica2
+      : redis_role: replica
         name: replica2
 
 verifier:
