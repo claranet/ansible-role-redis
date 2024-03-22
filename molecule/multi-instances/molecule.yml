@@ -1,7 +1,7 @@
 ---
 dependency:
   name: shell
-  command: python3 -m pip install pytest-testinfra
+  command: python3 -m pip install pytest-testinfra && ansible-galaxy collection install community.general
 
 driver:
   name: docker
@@ -10,7 +10,7 @@ platforms:
   # On "${name:-${image:-debian}", the last brace does not miss, it works like that...
   # The env var should be used when the image variable refers to a full registry path like registry.access.redhat.com/ubi8/ubi
   - &instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-multi_instances}_standalone
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-multi-instances}_standalone
     image: ${image:-debian}:${tag:-latest}
     privileged: true
     tty: true

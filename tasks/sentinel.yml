@@ -45,9 +45,9 @@
   changed_when: false
   register: _redis_sentinel_config_rewrite
 
-- name: Sentinel | Configure redis-sentinel
+- name: Sentinel | Configure redis-sentinel first time install
   ansible.builtin.template:
-    src: etc/redis/sentinel_{{ _config_version }}.conf.j2
+    src: etc/redis/sentinel.conf.j2
     dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
     owner: redis
     group: redis
@@ -58,6 +58,34 @@
     or
     _redis_sentinel_config_rewrite.found != 1
 
+- name: Sentinel | ensure redis-sentinel config is set
+  block:
+      - name: Sentinel | ensure redis-sentinel general config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "{{ item.key }} {{ item.value }}"
+          regexp: "^{{ item.key }}"
+        loop: "{{ _redis_sentinel_conf_final |dict2items }}"
+
+      - name: Sentinel | ensure redis-sentinel sentinel config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "sentinel {{ item.key }} {{ item.value }}"
+          regexp: "^sentinel {{ item.key }}"
+        loop: "{{ _redis_sentinel_sentinel_conf_final |dict2items }}"
+
+      - name: Sentinel | ensure redis-sentinel master config is set
+        ansible.builtin.lineinfile:
+          dest: /etc/redis/sentinel_{{ redis_sentinel_port }}.conf
+          line: "sentinel {{ item.key }} {{ redis_sentinel_master_name }} {{ item.value }}"
+          regexp: "^sentinel {{ item.key }} {{ redis_sentinel_master_name }}"
+        loop: "{{ _redis_sentinel_master_conf_final |dict2items }}"
+  notify: Redis-sentinel restart
+  when: >-
+    _redis_sentinel_config_rewrite.found is defined
+    and
+    _redis_sentinel_config_rewrite.found == 1
+
 - name: Sentinel | Activate redis-sentinel service
   ansible.builtin.systemd:
     name: redis-sentinel@{{ redis_sentinel_port }}.service
@@ -66,3 +94,43 @@
     enabled: true
     daemon_reload: "{{ _redis_sentinel_service is changed }}"
   register: _systemctl_start_redis_sentinel_
+
+- name: Sentinel | set replica with password
+  community.general.redis:
+    command: replica
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  when: redis_server_password is defined and redis_role == "replica"
+
+- name: Sentinel | set master with password
+  community.general.redis:
+    command: replica
+    replica_mode: master
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+    login_password: "{{ redis_server_password }}"
+  when: redis_server_password is defined and redis_role == "master"
+
+- name: Sentinel | set replica without password
+  community.general.redis:
+    command: replica
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+  when: redis_role == "replica"
+
+- name: Sentinel | set master without password
+  community.general.redis:
+    command: replica
+    replica_mode: master
+    master_host: "{{ _redis_master_ip }}"
+    master_port: "{{ redis_server_port }}"
+    login_host: "{{ _redis_conf_final.bind }}"
+    login_port: "{{ redis_server_port }}"
+  when: redis_role == "master"

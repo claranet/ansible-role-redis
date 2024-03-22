@@ -31,32 +31,20 @@ redis_group                           | **groups.redis**                        
 redis_server_version                  | **latest**                                         | redis version to install
 redis_server_user                     | **redis**                                          | redis user for configuration
 redis_server_group                    | **redis**                                          | group for redis
-redis_server_listen                   | **0.0.0.0**                                        | listen address
-redis_server_port                     | **6379**                                           | listen port
-redis_server_timeout                  | **0**                                              | server timeout
-redis_server_tcp_keepalive            | **300**                                            | server tcp keepalive
-redis_server_loglevel                 | **notice**                                         | server log level
 redis_server_logdir                   | **/var/log/redis**                                 | path to log directory
-redis_server_logfile                  | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
 redis_server_databases_number         | **16**                                             | number of databases
-redis_server_databases_dir            | **/var/lib/redis**                                 | path of databases files
-redis_server_dbfilename               | **{{ redis_server_port }}.rdb**                    | database filename
-redis_server_replica_readonly         | **yes**                                            | allow replica readonly with yes/no
-redis_server_replica_priority         | **100**                                            | set priority to replicas
-redis_server_replica_serve_stale_data | **yes**                                            | allow replica server stale data
-redis_server_maxclients               | **10000**                                          | maxclients number
-redis_server_limitnofile              | **65535**                                          | server limitnofile
-redis_server_maxmemory_policy         | **allkeys-lru**                                    | max memory policy
-redis_server_maxmemory_samples        | **5**                                              | max memory samples allowed
-redis_server_maxmemory                | **'{{ autocalculated \| int }}'**                  | max memory available
-redis_server_password                 | **null**                                           | redis server password
-redis_lazyfree_lazy_eviction          | **"no"**                                           | redis lazyfree lazy eviction
-redis_lazyfree_lazy_expire            | **"no"**                                           | redis lazyfree lazy expire
-redis_lazyfree_lazy_server_del        | **"no"**                                           | redis lazyfree lazy server del
-redis_replica_lazy_flush              | **"no"**                                           | redis replica lazy flush
-redis_lazyfree_lazy_user_del          | **"no"**                                           | redis replica lazy user del
-redis_appendonly                      | **"no"**                                           | redis append only mode
-redis_appendfilename                  | **{{ redis_server_port }}.aof**                    | redis append filename
+redis_server_port                     | **6379**                                           | listen port
+redis_server_password                 | **void**                                           | password for redis authentication
+redis_conf.bind                       | **0.0.0.0**                                        | listen address
+redis_conf.supervised                 | **systemd**                                        | Supervision option
+redis_conf.pidfile                    | **/var/run/redis_{{ redis_server_port }}.pid**     | pid file for systemd service
+redis_conf.logfile                    | **redis-server_{{ redis_server_port }}.log**       | name of redis log file
+redis_conf.dir                        | **/var/lib/redis**                                 | path of databases files
+redis_conf.dbfilename                 | **{{ redis_server_port }}.rdb**                    | database filename
+redis_conf.maxmemory-policy           | **allkeys-lru**                                    | max memory policy
+redis_conf.maxmemory                  | **'{{ autocalculated \| int }}'**                  | max memory available
+redis_conf.replica-priority           | **10 (master) / 100 (replica)**                    | replica priority
+redis_conf.appendfilename             | **{{ redis_server_port }}.aof**                    | redis append filename
 redis_sentinel_version                | **'{{ redis_server_version }}'**                   | sentinel version to install
 redis_sentinel_enabled                | **false**                                          | sentinel version to install
 redis_sentinel_daemonize              | **true**                                           | daemonize redis sentinel
@@ -69,25 +57,58 @@ redis_sentinel_quorum                 | **2**                                   
 redis sentinel downafter              | **10000**                                          | time for downafter
 redis_sentinel_failover_timeout       | **30000**                                          | failover timeout
 
+All other redis parameters have default values .
+
+Custom configuration should be declared inside a <code>redis_conf</code> dictionnary (see example below)
 
 ## :arrows_counterclockwise: Dependencies
 
-N/A
+community.general >= 2.0.0
 
 ## :pencil2: Example Playbook
-
 
 * #### Standalone scenario
 
 ```yaml
 ---
 - hosts: all
-  vars:
-    redis_sentinel_enabled: false
-    redis_server_version: 6:7.0.7
   roles:
     - role: claranet.redis
 ```
+
+* #### Previous release scenario
+
+```yaml
+---
+- hosts: all
+  vars:
+    redis_server_version: "6:7.0"
+  roles:
+    - role: claranet.redis
+```
+* #### Password scenario
+
+```yaml
+---
+- hosts: all
+  vars:
+    redis_server_password: "foobar"
+  roles:
+    - role: claranet.redis
+```
+* #### Custom configuration scenario
+
+```yaml
+---
+- hosts: all
+  vars:
+    redis_conf:
+      loglevel: "warning"
+  roles:
+    - role: claranet.redis
+```
+
+The available parameters for each release of redis can be found in the self documented configuration files available [here](https://redis.io/docs/management/config/)
 
 * #### Multi-instance scenario
 
@@ -96,20 +117,19 @@ N/A
 - name: First instance
   hosts: all
   vars:
-    redis_sentinel_enabled: false
-    redis_server_version: 6:7.0.7
+    redis_server_version: "6:7.0.7"
   roles:
     - role: claranet.redis
 
 - name: Second instance
   hosts: all
   vars:
-    redis_sentinel_enabled: false
-    redis_server_version: 6:7.0.7
+    redis_server_version: "6:7.0.7"
     redis_server_port: 6378
   roles:
     - role: claranet.redis
 ```
+If installing a previous release of redis, both instances should be the same version
 
 * #### Master slave scenario
 
@@ -134,9 +154,6 @@ all:
 ```yaml
 ---
 - hosts: all
-  vars:
-    redis_sentinel_enabled: false
-    redis_server_version: latest
   roles:
     - role: claranet.redis
 ```
@@ -166,7 +183,6 @@ all:
 - hosts: all
   vars:
     redis_sentinel_enabled: true
-    redis_server_version: 6:7.0.7
   roles:
     - role: claranet.redis
 ```

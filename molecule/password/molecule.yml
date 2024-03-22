@@ -10,7 +10,7 @@ platforms:
   # On "${name:-${image:-debian}", the last brace does not miss, it works like that...
   # The env var should be used when the image variable refers to a full registry path like registry.access.redhat.com/ubi8/ubi
   - &instance
-    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-previous-release}_standalone
+    name: claranet_redis_${name:-${image:-debian}-${tag:-latest}-${scenario:-password}_standalone
     image: ${image:-debian}:${tag:-latest}
     privileged: true
     tty: true
@@ -28,9 +28,6 @@ provisioner:
   name: ansible
   env:
     ANSIBLE_FORCE_COLOR: "true"
-    ANSIBLE_LOAD_CALLBACK_PLUGINS: "true"
-    ANSIBLE_CALLBACKS_ENABLED: "ansible.posix.profile_tasks"
-    ANSIBLE_STDOUT_CALLBACK: "ansible.posix.debug"
   options:
     v: true
 

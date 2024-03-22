@@ -5,6 +5,8 @@
       - curl
       - gnupg
       - procps
+      - python3
+      - python3-redis
     state: present
     update_cache: true
     force: true
