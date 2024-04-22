@@ -7,7 +7,7 @@ _redis_master_host: >-
   {%-   endif -%}
   {%- endfor -%}
 
-_redis_autodiscover_master_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] if _redis_master_host == '' else (hostvars[_redis_master_host]['ansible_all_ipv4_addresses'] | first) }}"
+_redis_autodiscover_master_ip: "{{ (hostvars[_redis_master_host]['ansible_all_ipv4_addresses'] | first) if _redis_master_host != '' else hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
 
 _redis_master_ip: "{{ redis_master_ip if redis_master_ip != '' else _redis_autodiscover_master_ip }}"
 
