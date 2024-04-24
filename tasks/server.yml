@@ -68,8 +68,8 @@
   loop: "{{ _redis_conf_final | dict2items }}"
   when: redis_server_password is not defined
 
-- name: get databases parameters
-  ansible.builtin.shell: >-
+- name: get databases parameters  # noqa risky-shell-pipe
+  ansible.builtin.shell: |
     redis-cli -p {{ redis_server_port }} -h {{ _redis_conf_final.bind }} {% if redis_server_password is defined %} -a {{ redis_server_password }} {% endif %} config get databases | tail -1
   register: immutable
   changed_when: false

@@ -46,6 +46,14 @@
     mode: 0750
     state: directory
 
+- name: Verify redis master ip autodiscovering in case of cluster installation
+  ansible.builtin.assert:
+    that:
+      - _redis_master_ip
+    fail_msg: "Unable to autodiscover master ip. Please set redis_master_ip role variables"
+    success_msg: "Discovering master ip with success: {{ _redis_master_ip }}"
+  when: redis_group | length > 1
+
 - name: "Include tasks for configure redis server"
   ansible.builtin.include_tasks: server.yml
   when: redis_server_enabled
