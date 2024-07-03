@@ -3,6 +3,6 @@
   hosts: all
   vars:
     redis_sentinel_enabled: false
-    redis_server_version: "6:6.2"
+    redis_server_version: "5:7.0"
   roles:
     - role: claranet.redis
