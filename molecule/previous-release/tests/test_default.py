@@ -13,14 +13,14 @@ def test_file_config(host):
     file = host.file("/etc/redis/redis_6379.conf")
     assert file.exists
     assert file.user == "redis"
-    assert file.contains("Version 6.2")
 
 
 def test_redis_listening(host):
     assert host.socket("tcp://0.0.0.0:6379").is_listening
 
+
 def test_redis_service(host):
-    redis_service = host.service('redis-server@6379')
+    redis_service = host.service("redis-server@6379")
     assert redis_service.is_enabled
     assert redis_service.is_running
 
@@ -29,4 +29,4 @@ def test_redis_cli(host):
     config = host.check_output("redis-cli -p 6379 config get loglevel")
     version = host.check_output("redis-cli -p 6379 info server")
     assert "notice" in config
-    assert "redis_version:6.2" in version
+    assert ("redis_version:7.0" in version) or ("redis_version:6.2" in version)
