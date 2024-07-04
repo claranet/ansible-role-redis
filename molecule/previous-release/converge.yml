@@ -3,6 +3,6 @@
   hosts: all
   vars:
     redis_sentinel_enabled: false
-    redis_server_version: "5:7.0"
+    redis_server_version: "{{ '5:7.0' if (ansible_distribution == 'Ubuntu' and ansible_distribution_version | float >= 24.04) else '6:6.2' }}"
   roles:
     - role: claranet.redis
